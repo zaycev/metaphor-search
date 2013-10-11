@@ -20,3 +20,7 @@ time python $SCRIPTS_ROOT/run_sentence_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $T
 time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s tiny -l 10000 -d 1
 time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s medium -l 100000 -d 1
 time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s large -l 1000000 -d 1
+
+time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s tiny
+time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s medium
+time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s large

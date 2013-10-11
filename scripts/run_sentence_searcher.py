@@ -69,7 +69,6 @@ if arguments.test == 1:
             query.append((term, []))
         queries.append(query)
 
-
     searcher = Searcher(index)
 
     for query in queries:

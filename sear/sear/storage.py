@@ -210,7 +210,7 @@ class LdbStorage(object):
     def get_document(self, document_id):
         if self.docs_ldb is None:
             return Exception("Storage should be opened in order to retrieve documents.")
-        return self.docs_ldb.Get(document_id)
+        return self.docs_ldb.Get(str(document_id))
 
     def get_term(self):
         pass

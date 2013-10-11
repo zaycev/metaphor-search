@@ -34,12 +34,5 @@ class MinLFSParser(object):
             else:
                 terms_match = self.LF_TERM_PRT.findall(line)
                 terms = [m[2] for m in terms_match] if terms_match is not None else []
-                #print raw_text
-                #print line
-                #for term in terms:
-                #    print "\t => %s" % term
-                #print
-                #print
-                #print
                 lf_line = line
                 yield raw_text, lf_line, terms

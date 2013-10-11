@@ -274,11 +274,11 @@ class Sentence(object):
     @staticmethod
     def from_lf_line(lf_line_index, lf_line):
         predicates = []
-        
+
         lf_line = lf_line.replace(" & ", "&")
         lf_line = lf_line.replace("((", "(")
         lf_line = lf_line.replace("))", ")")
-        
+
         predicate_str = lf_line.split("&")
         predicate_str = filter(lambda t: t != "&", predicate_str)
         for i, p_str in enumerate(predicate_str):

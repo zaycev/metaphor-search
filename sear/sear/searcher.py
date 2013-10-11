@@ -4,12 +4,14 @@
 
 class Searcher(object):
 
-    def __init__(self, index):
+    def __init__(self, index, ret_field):
         self.index = index
+        self.ret_field = ret_field
 
-    def find(self, query, ret_field):
+    def find(self, query, ret_field=None):
 
         intersect_lists = []
+        ret_field = ret_field if ret_field is not None else self.ret_field
         ret_field_id = self.index.field_keys[ret_field]
 
         for term_id, constraints in query:
@@ -48,3 +50,14 @@ class Searcher(object):
                     new_candidates.add(intersect_lists[i][j])
             last_candidates = new_candidates
         return last_candidates
+
+    def find_or(self, query):
+        results = dict()
+        for term_id, constraints in query:
+            found_documents = self.find([(term_id, constraints)])
+            for doc_id in found_documents:
+                if doc_id in results:
+                    results[doc_id].append(term_id)
+                else:
+                    results[doc_id] = [term_id]
+        return results

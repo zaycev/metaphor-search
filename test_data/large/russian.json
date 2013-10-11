@@ -1,0 +1,11 @@
+{
+	"annotation": {
+		"label": "poverty",
+		"language": "russian",
+		"corpus": "ruwac"
+	},
+	"query": {
+		"targets": ["деньги", "богатство", "средство"],
+		"sources": ["вода", "течь", "текут", "энергия", "возможность"]
+	}
+}

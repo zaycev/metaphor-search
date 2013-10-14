@@ -28,7 +28,6 @@ def __find_path(source, target, states, transitions):
     visited = set()
     visit_this_next = [source]
     while len(visit_this_next) > 0:
-        visit_this_next
         new_visit_this = []
         for state in visit_this_next:
             visited.add(state)

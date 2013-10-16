@@ -9,54 +9,95 @@
 
 import re
 
-
 SENT_RE = re.compile("((\[.+?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
+
+
+class Predicate(object):
+
+    def __init__(self, p_id, lemma, pos, args):
+        self.p_id = p_id
+        self.lemma = lemma
+        self.pos = pos
+        self.args = args
+
+    def __repr__(self):
+        return "<Predicate(%d, %s, %s)>" % (
+            self.p_id,
+            self.lemma,
+            (" " + self.pos) if self.pos else ""
+        )
+
+def find_path(source_lemma, target_lemma, sentence):
+    predicates = parse_sent(sentence)
+
+    sources = [pred for pred in predicates if pred.lemma == source_lemma]
+    targets = [pred for pred in predicates if pred.lemma == target_lemma]
+    arg_predicates = dict()
+    for pred in predicates:
+        for arg in pred.args:
+            if arg not in arg_predicates:
+                arg_predicates[arg] = [pred]
+            else:
+                arg_predicates[arg].append(pred)
+    for target in targets:
+        for source in sources:
+            found = __path_exists__(source, target, predicates, arg_predicates)
+            if found:
+                return True
+    return False
 
 
 def parse_sent(lf_text):
     matches = SENT_RE.findall(lf_text)
     predicates = []
-    for p in matches:
-        lemma = p[2]
-        #pos = p[3]
-        args = p[4][1:(len(p[4]) - 1)].split(",")
-        predicates.append((lemma, args))
+    for i, match in enumerate(matches):
+        lemma = match[2]
+        pos = match[3][1:]
+        args = match[4][1:(len(match[4]) - 1)].split(",")
+        predicates.append(Predicate(i, lemma, pos, args))
     return predicates
 
 
-def __find_path(source, target, states, transitions):
+def __path_exists__(source, target, predicates, arg_predicates):
+    """
+
+    predicates : pred_id -> predicate map
+    arg_predicates  : argument -> list of predicate where this arg appears
+
+    """
+
     visited = set()
-    visit_this_next = [source]
-    while len(visit_this_next) > 0:
-        new_visit_this = []
-        for state in visit_this_next:
-            visited.add(state)
-            state_transitions = transitions[state][1]
-            for t in state_transitions:
-                new_states = states[t]
-                for new_state in new_states:
-                    if new_state not in visited:
-                        if state == target:
-                            return True
-                        new_visit_this.append(new_state)
-            visit_this_next = new_visit_this
-    return False
 
+    source_arg = source.args[1] if source.pos == "nn" else source.args[0]
+    target_arg = target.args[1] if target.pos == "nn" else target.args[0]
 
-def find_path(source, target, sentence):
-    states = parse_sent(sentence)
-    transitions = dict()
-    sources_i = [i for i, (lemma, args) in enumerate(states) if lemma == source]
-    targets_i = [i for i, (lemma, args) in enumerate(states) if lemma == target]
-    for i, (lemma, args) in enumerate(states):
-        for arg in args:
-            if arg in transitions:
-                transitions[arg].append(i)
-            else:
-                transitions[arg] = [i]
-    for target_i in targets_i:
-        for source_i in sources_i:
-            found = __find_path(source_i, target_i, transitions, states)
-            if found:
-                return found
+    if source_arg in target.args:
+        return True
+
+    if target_arg in source.args:
+        return True
+
+    visited = set([source.p_id, target.p_id])
+    candidates = [pred for pred in arg_predicates[source_arg] if pred.p_id not in visited]
+    visited.update([pred.p_id for pred in candidates])
+
+    while len(candidates) > 0:
+        next_candidates = []
+
+        for candidate in candidates:
+
+            # check candidate
+            if target_arg in candidate.args:
+                return True
+
+            # add its neighbours to next candidates
+            for arg in candidate.args:
+                arg_preds = arg_predicates[arg]
+                for pred in arg_preds:
+                    if pred.p_id not in visited:
+                        next_candidates.append(pred)
+                        visited.add(pred.p_id)
+
+        candidates = next_candidates
+
     return False

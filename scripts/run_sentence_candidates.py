@@ -237,10 +237,14 @@ for document_id, (sources, targets) in candidates.iteritems():
                             "url": None,
                         }
                         entries.append(entry)
+                        o_file.write(json.dumps(entries, indent=8))
+                        o_file.write("\n")
+
     except Exception:
         import traceback
         logging.error(traceback.format_exc())
         logging.error("Exiting")
 
     if arguments.output_format == "json":
-        json.dump(entries, o_file, indent=8)
+        pass
+        # json.dump(entries, o_file, indent=8)

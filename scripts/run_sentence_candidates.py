@@ -18,6 +18,8 @@ from sear.lexicon import DictLexicon
 
 from hugin.metaphor import find_path
 
+from metaphor.ruwac import RuwacDocument
+
 
 logging.basicConfig(level=logging.INFO)
 
@@ -28,7 +30,8 @@ arg_parser.add_argument("-l", "--test_language", type=str, choices=("russian",),
 arg_parser.add_argument("-f", "--output_format", type=str, choices=("plain", "json", "pkl",), default="plain")
 arg_parser.add_argument("-q", "--query_file", type=str)
 arg_parser.add_argument("-i", "--input", type=str)
-arg_parser.add_argument("-o", "--output", type=str)
+arg_parser.add_argument("-c", "--context_input", default=None, type=str)
+arg_parser.add_argument("-o", "--output", default=None, type=str)
 arguments = arg_parser.parse_args()
 
 
@@ -49,17 +52,30 @@ if arguments.test == 1:
         arguments.output,
         "test_out",
         arguments.test_size,
-        "%s.txt" % arguments.test_language
+        "%s.json" % arguments.test_language
+    )
+    context_input = os.path.join(
+        arguments.output,
+        "test_out",
+        arguments.test_size,
+        arguments.context_input
     )
 else:
     input_path = arguments.input
     output_path = arguments.output
     query_path = arguments.query_file
+    context_input = arguments.context_input
 
 
 logging.info("Input: %s" % input_path)
+logging.info("Context: %s" % context_input)
 logging.info("Query: %s" % query_path)
 logging.info("Output: %s" % output_path)
+
+if output_path is None:
+    o_file = sys.stdout
+else:
+    o_file = open(output_path, "wb")
 
 
 logging.info("Initializing lexicon.")
@@ -74,6 +90,25 @@ index.open()
 
 logging.info("Initializing searcher.")
 searcher = Searcher(index, "sentence_id")
+
+if context_input is not None:
+
+    logging.info("Initializing context lexicon.")
+    c_lexicon = DictLexicon(context_input)
+    c_lexicon.load()
+
+
+    logging.info("Opening context index.")
+    c_index = InvertedIndex(context_input)
+    c_index.open()
+
+    logging.info("Initializing context searcher.")
+    c_searcher = Searcher(c_index, "ruwac_document_id")
+
+    logging.info("Initializing context storage.")
+    c_storage = LdbStorage(context_input)
+    c_storage.open_db()
+
 
 
 logging.info("Reading query.")
@@ -136,25 +171,66 @@ logging.info("Initializing storage.")
 storage = LdbStorage(input_path)
 storage.open_db()
 
+logging.info("Initializing context storage storage.")
+
 
 logging.info("Checking candidates.")
 proven = []
+entries = []
 for document_id, (sources, targets) in candidates.iteritems():
-    document = storage.get_document(document_id)
+    sent_document = json.loads(storage.get_document(document_id))
 
-    text = json.loads(document)["r"].encode("utf-8")
-    lf_text = json.loads(document)["s"].encode("utf-8")
+
+    sent_text = sent_document["r"].encode("utf-8")
+    sent_lf_text = sent_document["s"].encode("utf-8")
+    sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
 
     for target_term_id in targets:
         for source_term_id in sources:
             target_term = mini_dict[target_term_id]
             source_term = mini_dict[source_term_id]
-            found = find_path(target_term, source_term, lf_text)
+            found = find_path(target_term, source_term, sent_lf_text)
             if found:
                 if arguments.output_format == "plain":
                     sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
                         source_term,
                         target_term,
-                        text,
-                        lf_text,
+                        sent_text,
+                        sent_lf_text,
                     ))
+                elif arguments.output_format == "json":
+                    if context_input is not None:
+                        c_query = [(c_lexicon.get_id(term), [])
+                                    for term in sent_terms
+                                    if c_lexicon.get_id(term) != -1]
+                        logging.info("Searching context using %d of %d terms" % (len(c_query), len(sent_terms)))
+                        c_candidates = found_contexts = c_searcher.find(c_query)
+                        logging.info("Found %d candidates for context", len(c_candidates))
+                        matched_context = []
+                        for doc_id in c_candidates:
+                            document_blob = c_storage.get_document(doc_id)
+                            document = RuwacDocument(doc_id)
+                            document.fromstring(document_blob)
+                            document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
+                            document_text = " ".join(document_terms)
+                            if sent_text in document_text:
+                                matched_context.append(document)
+                            # logging.info("Trying to match content", len(c_candidates))
+                        logging.info("Found %d matching documents", len(matched_context))
+
+                    entry = {
+                        "metaphorAnnotationRecords": {
+                            "linguisticMetaphor": "",
+                            "context": "",
+                            "sourceConceptSubDomain": source_term,
+                            "sourceFrame": "",
+                            "targetConceptSubDomain": target_term,
+                        },
+                        "language": q_language,
+                        "sentenceList": [],
+                        "url": None
+                    }
+                    entries.append(entry)
+
+    if arguments.output_format == "json":
+        json.dump(entries, o_file)

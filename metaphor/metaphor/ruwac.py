@@ -45,7 +45,7 @@ class RuwacStream(object):
 
 class RuwacDocument(Document):
 
-    def __init__(self, d_id, url, title, content, terms):
+    def __init__(self, d_id, url=None, title=None, content=None, terms=None):
         """
 
         @type d_id: int

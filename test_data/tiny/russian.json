@@ -5,7 +5,7 @@
 		"corpus": "ruwac"
 	},
 	"query": {
-		"targets": ["новый"],
-		"sources": ["технология"]
+		"targets": ["массовый"],
+		"sources": ["спорт"]
 	}
 }

@@ -185,57 +185,62 @@ for document_id, (sources, targets) in candidates.iteritems():
     sent_lf_text = sent_document["s"].encode("utf-8")
     sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
 
-    for target_term_id in targets:
-        for source_term_id in sources:
-            target_term = mini_dict[target_term_id]
-            source_term = mini_dict[source_term_id]
-            found = find_path(target_term, source_term, sent_lf_text)
-            if found:
-                if arguments.output_format == "plain":
-                    sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
-                        source_term,
-                        target_term,
-                        sent_text,
-                        sent_lf_text,
-                    ))
-                elif arguments.output_format == "json":
-                    if context_input is not None:
-                        c_query = [(c_lexicon.get_id(term), [])
-                                    for term in sent_terms
-                                    if c_lexicon.get_id(term) != -1]
-                        logging.info("Searching context using %d of %d terms" % (len(c_query), len(sent_terms)))
-                        c_candidates = found_contexts = c_searcher.find(c_query)
-                        logging.info("Found %d candidates for context", len(c_candidates))
-                        matched_context = []
-                        matched_context_s = []
-                        for doc_id in c_candidates:
-                            document_blob = c_storage.get_document(doc_id)
-                            document = RuwacDocument(doc_id)
-                            document.fromstring(document_blob)
-                            document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
-                            document_text = " ".join(document_terms)
-                            if sent_text in document_text:
-                                matched_context.append(document)
-                                matched_context_s.append(document_text)
-                            # logging.info("Trying to match content", len(c_candidates))
-                        logging.info("Found %d matching documents", len(matched_context))
-                    else:
-                        matched_context = []
-                        matched_context_s = []
+    try:
+        for target_term_id in targets:
+            for source_term_id in sources:
+                target_term = mini_dict[target_term_id]
+                source_term = mini_dict[source_term_id]
+                found = find_path(target_term, source_term, sent_lf_text)
+                if found:
+                    if arguments.output_format == "plain":
+                        sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
+                            source_term,
+                            target_term,
+                            sent_text,
+                            sent_lf_text,
+                        ))
+                    elif arguments.output_format == "json":
+                        if context_input is not None:
+                            c_query = [(c_lexicon.get_id(term), [])
+                                        for term in sent_terms
+                                        if c_lexicon.get_id(term) != -1]
+                            logging.info("Searching context using %d of %d terms" % (len(c_query), len(sent_terms)))
+                            c_candidates = found_contexts = c_searcher.find(c_query)
+                            logging.info("Found %d candidates for context", len(c_candidates))
+                            matched_context = []
+                            matched_context_s = []
+                            for doc_id in c_candidates:
+                                document_blob = c_storage.get_document(doc_id)
+                                document = RuwacDocument(doc_id)
+                                document.fromstring(document_blob)
+                                document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
+                                document_text = " ".join(document_terms)
+                                if sent_text in document_text:
+                                    matched_context.append(document)
+                                    matched_context_s.append(document_text)
+                                # logging.info("Trying to match content", len(c_candidates))
+                            logging.info("Found %d matching documents", len(matched_context))
+                        else:
+                            matched_context = []
+                            matched_context_s = []
 
-                    entry = {
-                        "metaphorAnnotationRecords": {
-                            "linguisticMetaphor": "<METAPHOR>",
-                            "context": sent_text,
-                            "sourceConceptSubDomain": source_term,
-                            "sourceFrame": "",
-                            "targetConceptSubDomain": target_term,
-                        },
-                        "language": q_language,
-                        "sentenceList": [] if len(matched_context) == 0 else matched_context[0].content,
-                        "url": None,
-                    }
-                    entries.append(entry)
+                        entry = {
+                            "metaphorAnnotationRecords": {
+                                "linguisticMetaphor": "<METAPHOR>",
+                                "context": sent_text,
+                                "sourceConceptSubDomain": source_term,
+                                "sourceFrame": "",
+                                "targetConceptSubDomain": target_term,
+                            },
+                            "language": q_language,
+                            "sentenceList": [] if len(matched_context) == 0 else matched_context[0].content,
+                            "url": None,
+                        }
+                        entries.append(entry)
+    except Exception:
+        import traceback
+        logging.error(traceback.format_exc())
+        logging.error("Exiting")
 
     if arguments.output_format == "json":
         json.dump(entries, o_file, indent=8)

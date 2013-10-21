@@ -27,7 +27,7 @@ class Predicate(object):
             (" " + self.pos) if self.pos else ""
         )
 
-def find_path(source_lemma, target_lemma, sentence):
+def find_path(source_lemma, target_lemma, sentence, max_path_length=0):
     predicates = parse_sent(sentence)
 
     sources = [pred for pred in predicates if pred.lemma == source_lemma]
@@ -41,7 +41,7 @@ def find_path(source_lemma, target_lemma, sentence):
                 arg_predicates[arg].append(pred)
     for target in targets:
         for source in sources:
-            found = __path_exists__(source, target, predicates, arg_predicates)
+            found = __path_exists__(source, target, predicates, arg_predicates, max_path_length)
             if found:
                 return True
     return False
@@ -58,7 +58,7 @@ def parse_sent(lf_text):
     return predicates
 
 
-def __path_exists__(source, target, predicates, arg_predicates):
+def __path_exists__(source, target, predicates, arg_predicates, max_path_length):
     """
 
     predicates : pred_id -> predicate map
@@ -77,11 +77,18 @@ def __path_exists__(source, target, predicates, arg_predicates):
     if target_arg in source.args:
         return True
 
+    if max_path_length == 0:
+        return False
+
     visited = set([source.p_id, target.p_id])
     candidates = [pred for pred in arg_predicates[source_arg] if pred.p_id not in visited]
     visited.update([pred.p_id for pred in candidates])
 
+    iter = 1
     while len(candidates) > 0:
+        if iter > max_path_length:
+            return False
+        iter += 1
         next_candidates = []
 
         for candidate in candidates:

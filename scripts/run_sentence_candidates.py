@@ -7,9 +7,9 @@ import os
 import gc
 import sys
 import json
-import random
 import logging
 import argparse
+import hashlib
 
 from sear.searcher import Searcher
 from sear.storage import LdbStorage
@@ -118,6 +118,7 @@ q_language = j_query.get("annotation", dict()).get("language")
 q_corpus = j_query.get("annotation", dict()).get("corpus")
 q_targets = j_query.get("query", dict()).get("targets")
 q_sources = j_query.get("query", dict()).get("sources")
+q_max_path_length =  j_query.get("query", dict()).get("max_path_lenght", 0)
 
 mini_dict = dict()
 for term in q_targets:
@@ -177,6 +178,7 @@ logging.info("Initializing context storage storage.")
 logging.info("Checking candidates.")
 proven = []
 entries = []
+sent_hashes = set()
 for document_id, (sources, targets) in candidates.iteritems():
     sent_document = json.loads(storage.get_document(document_id))
 
@@ -184,13 +186,20 @@ for document_id, (sources, targets) in candidates.iteritems():
     sent_text = sent_document["r"].encode("utf-8")
     sent_lf_text = sent_document["s"].encode("utf-8")
     sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
+    sent_hash = hashlib.md5(sent_text).hexdigest()
+    if sent_hash in sent_hashes:
+        logging.info("Skipped sentence, because we see its hash before")
+        continue
+    else:
+        sent_hashes.add(sent_hash)
 
     try:
         for target_term_id in targets:
             for source_term_id in sources:
                 target_term = mini_dict[target_term_id]
                 source_term = mini_dict[source_term_id]
-                found = find_path(target_term, source_term, sent_lf_text)
+                found = find_path(target_term, source_term, sent_lf_text, max_path_length=q_max_path_length)
+
                 if found:
                     if arguments.output_format == "plain":
                         sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
@@ -226,18 +235,19 @@ for document_id, (sources, targets) in candidates.iteritems():
 
                         entry = {
                             "metaphorAnnotationRecords": {
+                                "hash": sent_hash.decode("utf-8"),
                                 "linguisticMetaphor": "<METAPHOR>",
-                                "context": sent_text,
-                                "sourceConceptSubDomain": source_term,
+                                "context": sent_text.decode("utf-8"),
+                                "sourceConceptSubDomain": source_term.decode("utf-8"),
                                 "sourceFrame": "",
-                                "targetConceptSubDomain": target_term,
+                                "targetConceptSubDomain": target_term.decode("utf-8"),
                             },
                             "language": q_language,
-                            "sentenceList": [] if len(matched_context) == 0 else matched_context[0].content,
-                            "url": None,
+                            "sentenceList": [] if len(matched_context) == 0 else matched_context_s[0].decode("utf-8"),
+                            "url": matched_context[0].url,
                         }
                         entries.append(entry)
-                        o_file.write(json.dumps(entries, indent=8).encode("utf-8"))
+                        o_file.write(json.dumps(entries, indent=8, ensure_ascii=False).encode("utf-8"))
                         o_file.write("\n")
 
     except Exception:

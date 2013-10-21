@@ -207,6 +207,7 @@ for document_id, (sources, targets) in candidates.iteritems():
                         c_candidates = found_contexts = c_searcher.find(c_query)
                         logging.info("Found %d candidates for context", len(c_candidates))
                         matched_context = []
+                        matched_context_s = []
                         for doc_id in c_candidates:
                             document_blob = c_storage.get_document(doc_id)
                             document = RuwacDocument(doc_id)
@@ -215,22 +216,26 @@ for document_id, (sources, targets) in candidates.iteritems():
                             document_text = " ".join(document_terms)
                             if sent_text in document_text:
                                 matched_context.append(document)
+                                matched_context_s.append(document_text)
                             # logging.info("Trying to match content", len(c_candidates))
                         logging.info("Found %d matching documents", len(matched_context))
+                    else:
+                        matched_context = []
+                        matched_context_s = []
 
                     entry = {
                         "metaphorAnnotationRecords": {
-                            "linguisticMetaphor": "",
-                            "context": "",
+                            "linguisticMetaphor": "<METAPHOR>",
+                            "context": sent_text,
                             "sourceConceptSubDomain": source_term,
                             "sourceFrame": "",
                             "targetConceptSubDomain": target_term,
                         },
                         "language": q_language,
-                        "sentenceList": [],
-                        "url": None
+                        "sentenceList": [] if len(matched_context) == 0 else matched_context[0].content,
+                        "url": None,
                     }
                     entries.append(entry)
 
     if arguments.output_format == "json":
-        json.dump(entries, o_file)
+        json.dump(entries, o_file, indent=8)

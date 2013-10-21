@@ -237,7 +237,7 @@ for document_id, (sources, targets) in candidates.iteritems():
                             "url": None,
                         }
                         entries.append(entry)
-                        o_file.write(json.dumps(entries, indent=8, ensure_ascii=False).encode("utf-8"))
+                        o_file.write(json.dumps(entries, indent=8).encode("utf-8"))
                         o_file.write("\n")
 
     except Exception:

@@ -180,8 +180,12 @@ logging.info("Checking candidates.")
 proven = []
 entries = []
 sent_hashes = set()
-for document_id, (sources, targets) in candidates.iteritems():
-    sent_document = json.loads(storage.get_document(document_id))
+
+o_file.write("[")
+iter = 0
+
+for sent_document_id, (sources, targets) in candidates.iteritems():
+    sent_document = json.loads(storage.get_document(sent_document_id))
 
 
     sent_text = sent_document["r"].encode("utf-8")
@@ -189,18 +193,22 @@ for document_id, (sources, targets) in candidates.iteritems():
     sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
     sent_hash = str(hashlib.md5(sent_text).hexdigest())
     if sent_hash in sent_hashes:
-        logging.info("Skipped sentence, because we see its hash before")
+        logging.info("Skipped sentence, because we've seen its hash before: %s" % sent_hash[:8])
         continue
     else:
+        logging.info("Added a new sentence digest to the duplicates hash set: %s" %  sent_hash[:8])
         sent_hashes.add(sent_hash)
 
     try:
         for target_term_id in targets:
             for source_term_id in sources:
+
                 target_term = mini_dict[target_term_id]
                 source_term = mini_dict[source_term_id]
                 a, b, found = find_path(target_term, source_term, sent_lf_text, max_path_length=q_max_path_length)
+
                 if found:
+
                     if arguments.output_format == "plain":
                         sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
                             source_term,
@@ -208,14 +216,18 @@ for document_id, (sources, targets) in candidates.iteritems():
                             sent_text,
                             sent_lf_text,
                         ))
+
                     elif arguments.output_format == "json":
                         if context_input is not None:
+
                             c_query = [(c_lexicon.get_id(term), [])
                                         for term in sent_terms
                                         if c_lexicon.get_id(term) != -1]
+
                             logging.info("Searching context using %d of %d terms" % (len(c_query), len(sent_terms)))
                             c_candidates = found_contexts = c_searcher.find(c_query)
                             logging.info("Found %d candidates for context", len(c_candidates))
+
                             matched_context = []
                             matched_context_s = []
                             for doc_id in c_candidates:
@@ -225,17 +237,18 @@ for document_id, (sources, targets) in candidates.iteritems():
                                 document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
                                 document_text = " ".join(document_terms)
                                 if sent_text in document_text:
-                                    sentence_list = [" ".join(sent).decode("utf-8") for sent in document.content]
+                                    sentence_list = [" ".join(sent) for sent in document.content]
                                     matched_context.append(document)
                                     matched_context_s.append(sentence_list)
                             logging.info("Found %d matching documents", len(matched_context))
+
                         else:
+
                             matched_context = []
                             matched_context_s = []
 
                         entry = {
                             "metaphorAnnotationRecords": {
-                                "hash": sent_hash.decode("utf-8"),
                                 "linguisticMetaphor": " ".join(sent_terms[(a - 1):b]).decode("utf-8"),
                                 "context": sent_text.decode("utf-8"),
                                 "sourceConceptSubDomain": source_term.decode("utf-8"),
@@ -251,14 +264,18 @@ for document_id, (sources, targets) in candidates.iteritems():
                             entry["logic_form"] = sent_lf_text.decode("utf-8")
 
                         entries.append(entry)
-                        o_file.write(json.dumps(entries, indent=8, ensure_ascii=False).encode("utf-8"))
-                        o_file.write("\n")
+                        if iter != 0:
+                            o_file.write(",\n")
+
+                        o_file.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
+                        iter += 1
 
     except Exception:
         import traceback
         logging.error(traceback.format_exc())
         logging.error("Exiting")
 
-    if arguments.output_format == "json":
-        pass
-        # json.dump(entries, o_file, indent=8)
+o_file.write("\n]")
+
+if arguments.output_format == "json":
+    pass

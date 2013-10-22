@@ -249,7 +249,7 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
 
                         entry = {
                             "metaphorAnnotationRecords": {
-                                "linguisticMetaphor": " ".join(sent_terms[(a - 1):b]).decode("utf-8"),
+                                "linguisticMetaphor": " ".join(sent_terms[(a - 1):(b + 1)]).decode("utf-8"),
                                 "context": sent_text.decode("utf-8"),
                                 "sourceConceptSubDomain": source_term.decode("utf-8"),
                                 "sourceFrame": "",

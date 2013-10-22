@@ -32,6 +32,7 @@ arg_parser.add_argument("-q", "--query_file", type=str)
 arg_parser.add_argument("-i", "--input", type=str)
 arg_parser.add_argument("-c", "--context_input", default=None, type=str)
 arg_parser.add_argument("-o", "--output", default=None, type=str)
+arg_parser.add_argument("-g", "--output_lf", default=0, choices=(0, 1), type=int)
 arguments = arg_parser.parse_args()
 
 
@@ -186,7 +187,7 @@ for document_id, (sources, targets) in candidates.iteritems():
     sent_text = sent_document["r"].encode("utf-8")
     sent_lf_text = sent_document["s"].encode("utf-8")
     sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
-    sent_hash = hashlib.md5(sent_text).hexdigest()
+    sent_hash = str(hashlib.md5(sent_text).hexdigest())
     if sent_hash in sent_hashes:
         logging.info("Skipped sentence, because we see its hash before")
         continue
@@ -198,8 +199,7 @@ for document_id, (sources, targets) in candidates.iteritems():
             for source_term_id in sources:
                 target_term = mini_dict[target_term_id]
                 source_term = mini_dict[source_term_id]
-                found = find_path(target_term, source_term, sent_lf_text, max_path_length=q_max_path_length)
-
+                a, b, found = find_path(target_term, source_term, sent_lf_text, max_path_length=q_max_path_length)
                 if found:
                     if arguments.output_format == "plain":
                         sys.stdout.write("[source:%s, target:%s]\n%s\n%s\n\n" % (
@@ -225,9 +225,10 @@ for document_id, (sources, targets) in candidates.iteritems():
                                 document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
                                 document_text = " ".join(document_terms)
                                 if sent_text in document_text:
+                                    sentence_list = [" ".join(sent).decode("utf-8") for sent in document.content]
                                     matched_context.append(document)
-                                    matched_context_s.append(document_text)
-                                # logging.info("Trying to match content", len(c_candidates))
+                                    matched_context_s.append(sentence_list)
+                                logging.info("Trying to match content", len(c_candidates))
                             logging.info("Found %d matching documents", len(matched_context))
                         else:
                             matched_context = []
@@ -236,16 +237,20 @@ for document_id, (sources, targets) in candidates.iteritems():
                         entry = {
                             "metaphorAnnotationRecords": {
                                 "hash": sent_hash.decode("utf-8"),
-                                "linguisticMetaphor": "<METAPHOR>",
+                                "linguisticMetaphor": " ".join(sent_terms[(a - 1):b]).decode("utf-8"),
                                 "context": sent_text.decode("utf-8"),
                                 "sourceConceptSubDomain": source_term.decode("utf-8"),
                                 "sourceFrame": "",
                                 "targetConceptSubDomain": target_term.decode("utf-8"),
                             },
                             "language": q_language,
-                            "sentenceList": [] if len(matched_context) == 0 else matched_context_s[0].decode("utf-8"),
-                            "url": matched_context[0].url,
+                            "sentenceList": [] if len(matched_context) == 0 else matched_context_s[0],
+                            "url": "" if len(matched_context) == 0 else matched_context[0].url,
                         }
+
+                        if arguments.output_lf:
+                            entry["logic_form"] = sent_lf_text.decode("utf-8")
+
                         entries.append(entry)
                         o_file.write(json.dumps(entries, indent=8, ensure_ascii=False).encode("utf-8"))
                         o_file.write("\n")

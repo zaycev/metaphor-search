@@ -123,9 +123,9 @@ q_max_path_length =  j_query.get("query", dict()).get("max_path_lenght", 0)
 q_source_frame = j_query.get("annotation", dict()).get("source_frame", None)
 q_source_concept_subdomain = j_query.get("annotation", dict()).get("source_concept_subdomain", None)
 
-q_target_frame = j_query.get("annotation", dict()).get("q_target_frame", None)
-q_target_concept_domain = j_query.get("annotation", dict()).get("q_target_concept_domain", None)
-q_target_concept_subdomain = j_query.get("annotation", dict()).get("q_target_concept_subdomain", None)
+q_target_frame = j_query.get("annotation").get("target_frame", None)
+q_target_concept_domain = j_query.get("annotation").get("target_concept_domain", None)
+q_target_concept_subdomain = j_query.get("annotation").get("target_concept_subdomain", None)
 
 q_language = j_query.get("annotation", dict()).get("language")
 
@@ -310,7 +310,6 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                         entries.append(entry)
                         if iter != 0:
                             o_file.write(",\n")
-                        sys.stdout.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         o_file.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         iter += 1
 

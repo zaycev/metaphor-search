@@ -115,11 +115,19 @@ if context_input is not None:
 logging.info("Reading query.")
 j_query = json.load(open(query_path, "rb"))
 q_label = j_query.get("annotation", dict()).get("label")
-q_language = j_query.get("annotation", dict()).get("language")
 q_corpus = j_query.get("annotation", dict()).get("corpus")
 q_targets = j_query.get("query", dict()).get("targets")
 q_sources = j_query.get("query", dict()).get("sources")
 q_max_path_length =  j_query.get("query", dict()).get("max_path_lenght", 0)
+
+q_source_frame = j_query.get("annotation", dict()).get("source_frame", None)
+q_source_concept_subdomain = j_query.get("annotation", dict()).get("source_concept_subdomain", None)
+
+q_target_frame = j_query.get("annotation", dict()).get("q_target_frame", None)
+q_target_concept_domain = j_query.get("annotation", dict()).get("q_target_concept_domain", None)
+q_target_concept_subdomain = j_query.get("annotation", dict()).get("q_target_concept_subdomain", None)
+
+q_language = j_query.get("annotation", dict()).get("language")
 
 mini_dict = dict()
 for term in q_targets:
@@ -181,7 +189,9 @@ proven = []
 entries = []
 sent_hashes = set()
 
-o_file.write("[")
+if arguments.output_format == "json":
+    o_file.write("[")
+
 iter = 0
 
 for sent_document_id, (sources, targets) in candidates.iteritems():
@@ -192,6 +202,7 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
     sent_lf_text = sent_document["s"].encode("utf-8")
     sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
     sent_hash = str(hashlib.md5(sent_text).hexdigest())
+
     if sent_hash in sent_hashes:
         logging.info("Skipped sentence, because we've seen its hash before: %s" % sent_hash[:8])
         continue
@@ -276,22 +287,30 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                             "metaphorAnnotationRecords": {
                                 "linguisticMetaphor": " ".join(raw_sentence_terms[a:(b + 1)]).decode("utf-8"),
                                 "context": " ".join(context).decode("utf-8"),
-                                "sourceConceptSubDomain": source_term.decode("utf-8"),
-                                "sourceFrame": "",
-                                "targetConceptSubDomain": target_term.decode("utf-8"),
+                                "annotationMappings": {
+                                    "sourceInLm": True,
+                                    "source": source_term.decode("utf-8"),
+                                    "targetInLm": True,
+                                    "target": target_term.decode("utf-8")
+                                },
+                                "sourceFrame": q_source_frame,
+                                "sourceConceptSubDomain": q_source_concept_subdomain,
+                                "targetFrame": q_target_frame,
+                                "targetConceptDomain": q_target_concept_domain,
+                                "targetConceptSubDomain": q_target_concept_subdomain
                             },
                             "language": q_language,
                             "sentenceList": [] if len(matched_context) == 0 else matched_context_s[0],
                             "url": "" if len(matched_context) == 0 else matched_context[0].url,
                         }
 
-                        # if arguments.output_lf:
-                        #     entry["logic_form"] = sent_lf_text.decode("utf-8")
+                        if arguments.output_lf:
+                            entry["logic_form"] = sent_lf_text.decode("utf-8")
 
                         entries.append(entry)
                         if iter != 0:
                             o_file.write(",\n")
-                        # sys.stdout.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
+                        sys.stdout.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         o_file.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         iter += 1
 
@@ -300,7 +319,6 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
         logging.error(traceback.format_exc())
         logging.error("Exiting")
 
-o_file.write("\n]")
 
 if arguments.output_format == "json":
-    pass
+    o_file.write("\n]")

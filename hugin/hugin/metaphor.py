@@ -43,8 +43,9 @@ def find_path(source_lemma, target_lemma, sentence, max_path_length=0):
         for source in sources:
             found = __path_exists__(source, target, predicates, arg_predicates, max_path_length)
             if found:
-                return True
-    return False
+                i, j = (target.p_id, source.p_id) if target.p_id < source.p_id else (source.p_id, target.p_id)
+                return i, j, True
+    return None, None, False
 
 
 def parse_sent(lf_text):

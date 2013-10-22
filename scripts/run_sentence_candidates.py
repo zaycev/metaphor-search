@@ -203,9 +203,12 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
         for target_term_id in targets:
             for source_term_id in sources:
 
-                target_term = mini_dict[target_term_id]
                 source_term = mini_dict[source_term_id]
-                a, b, found = find_path(target_term, source_term, sent_lf_text, max_path_length=q_max_path_length)
+                target_term = mini_dict[target_term_id]
+                source_p, target_p, found = find_path(target_term,
+                                                      source_term,
+                                                      sent_lf_text,
+                                                      max_path_length=q_max_path_length)
 
                 if found:
 
@@ -247,10 +250,32 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                             matched_context = []
                             matched_context_s = []
 
+
+
+                        if target_p.term_id < source_p.term_id:
+                            a, b = target_p.term_id, source_p.term_id
+                        elif target_p.term_id > source_p.term_id:
+                            a, b = source_p.term_id, target_p.term_id
+                        else:
+                            a, b = source_p.term_id, target_p.term_id
+                            logging.error("Error occured, target id == source id")
+
+                        context = []
+                        raw_sentence_terms = sent_text.split(" ")
+                        for k, term in enumerate(raw_sentence_terms):
+                            if k == a:
+                                context.append("======> *")
+                                context.append(term)
+                            elif k == b:
+                                context.append(term)
+                                context.append("<====== *")
+                            else:
+                                context.append(term)
+
                         entry = {
                             "metaphorAnnotationRecords": {
-                                "linguisticMetaphor": " ".join(sent_terms[(a - 1):(b + 1)]).decode("utf-8"),
-                                "context": sent_text.decode("utf-8"),
+                                "linguisticMetaphor": " ".join(raw_sentence_terms[a:(b + 1)]).decode("utf-8"),
+                                "context": " ".join(context).decode("utf-8"),
                                 "sourceConceptSubDomain": source_term.decode("utf-8"),
                                 "sourceFrame": "",
                                 "targetConceptSubDomain": target_term.decode("utf-8"),
@@ -260,13 +285,13 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                             "url": "" if len(matched_context) == 0 else matched_context[0].url,
                         }
 
-                        if arguments.output_lf:
-                            entry["logic_form"] = sent_lf_text.decode("utf-8")
+                        # if arguments.output_lf:
+                        #     entry["logic_form"] = sent_lf_text.decode("utf-8")
 
                         entries.append(entry)
                         if iter != 0:
                             o_file.write(",\n")
-
+                        # sys.stdout.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         o_file.write(json.dumps(entry, indent=8, ensure_ascii=False).encode("utf-8"))
                         iter += 1
 

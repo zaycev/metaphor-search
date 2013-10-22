@@ -14,11 +14,12 @@ SENT_RE = re.compile("((\[.+?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
 
 class Predicate(object):
 
-    def __init__(self, p_id, lemma, pos, args):
+    def __init__(self, p_id, lemma, pos, args, term_id):
         self.p_id = p_id
         self.lemma = lemma
         self.pos = pos
         self.args = args
+        self.term_id = term_id
 
     def __repr__(self):
         return "<Predicate(%d, %s, %s)>" % (
@@ -43,8 +44,7 @@ def find_path(source_lemma, target_lemma, sentence, max_path_length=0):
         for source in sources:
             found = __path_exists__(source, target, predicates, arg_predicates, max_path_length)
             if found:
-                i, j = (target.p_id, source.p_id) if target.p_id < source.p_id else (source.p_id, target.p_id)
-                return i, j, True
+                return source, target, True
     return None, None, False
 
 
@@ -52,10 +52,17 @@ def parse_sent(lf_text):
     matches = SENT_RE.findall(lf_text)
     predicates = []
     for i, match in enumerate(matches):
+        term_id = match[1]
+        term_id = match[1][(len(term_id)-5):(len(term_id)-2)]
+        if term_id != "":
+            term_id = int(term_id) - 1
+        else:
+            term_id = -1
         lemma = match[2]
         pos = match[3][1:]
         args = match[4][1:(len(match[4]) - 1)].split(",")
-        predicates.append(Predicate(i, lemma, pos, args))
+        predicates.append(Predicate(i, lemma, pos, args, term_id))
+
     return predicates
 
 

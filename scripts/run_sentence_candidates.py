@@ -228,7 +228,6 @@ for document_id, (sources, targets) in candidates.iteritems():
                                     sentence_list = [" ".join(sent).decode("utf-8") for sent in document.content]
                                     matched_context.append(document)
                                     matched_context_s.append(sentence_list)
-                                logging.info("Trying to match content", len(c_candidates))
                             logging.info("Found %d matching documents", len(matched_context))
                         else:
                             matched_context = []

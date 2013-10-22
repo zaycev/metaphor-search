@@ -5,6 +5,7 @@
 		"corpus": "ruwac"
 	},
 	"query": {
+		"max_path_lenght": 100,
 		"targets": ["бедность"],
 		"sources": ["порок"]
 	}

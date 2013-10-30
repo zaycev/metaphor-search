@@ -1,11 +1,19 @@
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/sentence > test_data/tiny/sentence.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/sentence > test_data/medium/sentence.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/sentence > test_data/large/sentence.xz
+# Russian
 
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/ruwac > test_data/tiny/ruwac.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/ruwac > test_data/medium/ruwac.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/ruwac > test_data/large/ruwac.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/ru/sentence.txt > test_data/tiny/ru/sentence.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/ru/sentence.txt > test_data/medium/ru/sentence.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/ru/sentence.txt > test_data/large/ru/sentence.xz
 
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/triplet > test_data/tiny/triplet.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/triplet > test_data/medium/triplet.xz
-7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/triplet > test_data/large/triplet.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/ru/ruwac.txt > test_data/tiny/ru/ruwac.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/ru/ruwac.txt > test_data/medium/ru/ruwac.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/ru/ruwac.txt > test_data/large/ru/ruwac.xz
+
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/ru/triplet.txt > test_data/tiny/ru/triplet.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/ru/triplet.txt > test_data/medium/ru/triplet.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/ru/triplet.txt > test_data/large/ru/triplet.xz
+
+# Spanish
+
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/tiny/es/sentence.txt > test_data/tiny/es/sentence.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/medium/es/sentence.txt > test_data/medium/es/sentence.xz
+7z a -an -m0=lzma2 -txz -mx=4 -mmt=8 -si -so < test_data/large/es/sentence.txt > test_data/large/es/sentence.xz

@@ -21,7 +21,9 @@ class LdbStorage(object):
     TERMS_FL = "terms.ldb"
     DOCS_FL = "docs.ldb"
     META_FL = "storage.json"
-    BUFF_SZ = 4024 * 512
+    
+    TERM_BUFF_SZ = 4096 * 4096
+    DOCS_BUFF_SZ = 4096 * 256
 
     def __init__(self, root_dir, terms_fl=None, docs_fl=None):
 
@@ -35,8 +37,10 @@ class LdbStorage(object):
         self.documents_number = 0                       # total number of documents in storage
         self.terms_number = 0                           # total number of terms in storage
 
-        self.max_doc_flush_buffer_size = self.BUFF_SZ   # max number of items in doc buffer
-        self.max_term_flush_buffer_size = self.BUFF_SZ  # max number of items in term buffer
+        self.max_doc_flush_buffer_size = \
+            self.DOCS_BUFF_SZ                           # max number of items in doc buffer
+        self.max_term_flush_buffer_size = \
+            self.TERM_BUFF_SZ                           # max number of items in term buffer
         self.doc_buffer_size = None                     # number of items in doc buffer
         self.term_buffer_size = None                    # number of items in term buffer
         self.max_term_size = 64                         # max size of term in storage

@@ -1,0 +1,61 @@
+{
+	"annotation": {
+		"label": "poverty",
+		"language": "spanish",
+		"corpus": "gigaword",
+
+		"source_frame": "building",
+		"source_concept_subdomain": "",
+
+		"target_frame": "wealth",
+		"target_concept_domain": "economy",
+		"target_concept_subdomain": "wealth"
+	},
+	"query": {
+		"max_path_lenght": 100,
+		"targets": [
+            "riqueza",
+            "dinero"
+        ],
+		"sources": [
+            "rezumar",
+    		"salirse",
+            "torrente",
+    		"corriente",
+    		"flujo",
+    		"mar",
+    		"río",
+    		"océano",
+    		"gusto",
+    		"gustar",
+    		"camino",
+    		"vía",
+    		"ruta",
+    		"paso",
+    		"materiales",
+    		"inversiones",
+    		"cegar",
+    		"deslumbrar",
+    		"ofuscar",
+    		"ciego",
+    		"poder",
+    		"gobernar",
+    		"regir",
+    		"corregir",
+    		"corregir",
+    		"esclavo",
+    		"criado",
+    		"patrón",
+    		"amo",
+    		"esclavitud",
+    		"dios",
+    		"ídolo",
+    		"rezar",
+    		"orar",
+    		"adorar",
+    		"luz",
+    		"iluminar",
+    		"iluminarse"
+        ]
+	}
+}

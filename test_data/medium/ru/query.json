@@ -1,8 +1,8 @@
 {
 	"annotation": {
 		"label": "poverty",
-		"language": "russian",
-		"corpus": "ruwac",
+		"language": "spanish",
+		"corpus": "gigaword",
 
 		"source_frame": "building",
 		"source_concept_subdomain": "",

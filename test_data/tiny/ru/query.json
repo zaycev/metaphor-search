@@ -1,0 +1,19 @@
+{
+	"annotation": {
+		"label": "poverty",
+		"language": "russian",
+		"corpus": "ruwac",
+
+		"source_frame": "building",
+		"source_concept_subdomain": "",
+
+		"target_frame": "wealth",
+		"target_concept_domain": "economy",
+		"target_concept_subdomain": "wealth"
+	},
+	"query": {
+		"max_path_lenght": 100,
+		"targets": ["пассаж"],
+		"sources": ["риторика"]
+	}
+}

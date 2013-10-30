@@ -23,7 +23,7 @@ class LdbStorage(object):
     META_FL = "storage.json"
     
     TERM_BUFF_SZ = 4096 * 4096
-    DOCS_BUFF_SZ = 4096 * 256
+    DOCS_BUFF_SZ = 4096
 
     def __init__(self, root_dir, terms_fl=None, docs_fl=None):
 

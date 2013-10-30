@@ -24,15 +24,15 @@ from metaphor.ruwac import RuwacDocument
 logging.basicConfig(level=logging.INFO)
 
 arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("-t", "--test", type=int, choices=(0, 1), default=0)
-arg_parser.add_argument("-s", "--test_size", type=str, choices=("tiny", "medium", "large"), default="tiny")
-arg_parser.add_argument("-l", "--test_language", type=str, choices=("russian",), default="russian")
-arg_parser.add_argument("-f", "--output_format", type=str, choices=("plain", "json", "pkl",), default="plain")
-arg_parser.add_argument("-q", "--query_file", type=str)
-arg_parser.add_argument("-i", "--input", type=str)
-arg_parser.add_argument("-c", "--context_input", default=None, type=str)
-arg_parser.add_argument("-o", "--output", default=None, type=str)
-arg_parser.add_argument("-g", "--output_lf", default=0, choices=(0, 1), type=int)
+arg_parser.add_argument("-t", "--test",             type=int, choices=(0, 1), default=0)
+arg_parser.add_argument("-s", "--test_size",        type=str, choices=("tiny", "medium", "large"), default="tiny")
+arg_parser.add_argument("-l", "--language",         type=str, default=None)
+arg_parser.add_argument("-f", "--output_format",    type=str, choices=("plain", "json"), default="plain")
+arg_parser.add_argument("-q", "--query_file",       type=str)
+arg_parser.add_argument("-i", "--input",            type=str)
+arg_parser.add_argument("-c", "--context_input",    type=str, default=None)
+arg_parser.add_argument("-o", "--output",           type=str, default=None)
+arg_parser.add_argument("-g", "--output_lf",        type=int, default=0, choices=(0, 1))
 arguments = arg_parser.parse_args()
 
 
@@ -41,25 +41,29 @@ if arguments.test == 1:
         arguments.input,
         "test_out",
         arguments.test_size,
+        arguments.language,
         "sentence"
     )
     query_path = os.path.join(
         arguments.input,
         "test_data",
         arguments.test_size,
-        "%s.json" % arguments.test_language
+        arguments.language,
+        "query.json",
     )
     output_path = os.path.join(
         arguments.output,
         "test_out",
         arguments.test_size,
-        "%s.json" % arguments.test_language
+        arguments.language,
+        "candidates.json"
     )
     context_input = os.path.join(
         arguments.output,
         "test_out",
         arguments.test_size,
-        arguments.context_input
+        arguments.language,
+        "document"
     )
 else:
     input_path = arguments.input
@@ -104,7 +108,10 @@ if context_input is not None:
     c_index.open()
 
     logging.info("Initializing context searcher.")
-    c_searcher = Searcher(c_index, "ruwac_document_id")
+    if arguments.language == "ru":
+        c_searcher = Searcher(c_index, "ruwac_document_id")
+    else:
+        c_searcher = Searcher(c_index, "document_id")
 
     logging.info("Initializing context storage.")
     c_storage = LdbStorage(context_input)

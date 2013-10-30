@@ -22,16 +22,19 @@ time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT
 time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium  -c ruwac
 time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large   -c ruwac
 
-time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s tiny    -c ruwac
-time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium  -c ruwac
-time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large   -c ruwac
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s tiny
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large
 
 # Spanish
 time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s tiny
 time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s medium
 time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s large
 
-time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s tiny      -c gigaword
-time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s medium    -c gigaword
-time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s large     -c gigaword
+time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s tiny    -c gigaword
+time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s medium  -c gigaword
+time python $SCRIPTS_ROOT/run_document_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s large   -c gigaword
 
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s tiny
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s medium
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s large

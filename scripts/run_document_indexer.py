@@ -19,15 +19,20 @@ from metaphor.ruwac import RuwacParser
 from metaphor.ruwac import RuwacStream
 from metaphor.ruwac import RuwacIndexer
 
+from metaphor.gigaword import GigawordStream
+from metaphor.gigaword import GigawordParser
+
 
 logging.basicConfig(level=logging.INFO)
 
 
 arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("-t", "--test", type=int, choices=(0, 1), default=0)
-arg_parser.add_argument("-s", "--test_size", type=str, choices=("tiny", "medium", "large"), default="tiny")
-arg_parser.add_argument("-i", "--input", type=str)
-arg_parser.add_argument("-o", "--output", type=str)
+arg_parser.add_argument("-t", "--test",         type=int, choices=(0, 1), default=0)
+arg_parser.add_argument("-s", "--test_size",    type=str, choices=("tiny", "medium", "large"), default="tiny")
+arg_parser.add_argument("-l", "--language",     type=str, default=None)
+arg_parser.add_argument("-c", "--corpus",       type=str, choices=("ruwac", "gigaword"), default=None)
+arg_parser.add_argument("-i", "--input",        type=str)
+arg_parser.add_argument("-o", "--output",       type=str)
 arguments = arg_parser.parse_args()
 
 
@@ -39,13 +44,15 @@ if arguments.test == 1:
         arguments.input,
         "test_data",
         arguments.test_size,
-        "ruwac.txt"
+        arguments.language,
+        "document.txt"
     )
     output_path = os.path.join(
         arguments.output,
         "test_out",
         arguments.test_size,
-        "ruwac"
+        arguments.language,
+        "document"
     )
 else:
 
@@ -75,15 +82,23 @@ storage.open_db()
 
 logging.info("Initializing index.")
 index = InvertedIndex(output_path, field_properties=[
-    ("ruwac_document_id", numpy.int32),
+    ("document_id", numpy.int32),
 ])
 index.init_index()
 index.open()
 
 
 logging.info("Initializing ruwac stream and its parser.")
-sentence_stream = RuwacStream(open(input_path, "rb"))
-sentence_parser = RuwacParser()
+
+if arguments.language == "es":
+    sentence_stream = GigawordStream(open(input_path, "rb"))
+    sentence_parser = GigawordParser(language=arguments.language)
+elif arguments.language == "ru":
+    sentence_stream = RuwacStream(open(input_path, "rb"))
+    sentence_parser = RuwacParser()
+else:
+    raise Exception("Unsupported language: %s" % arguments.language)
+
 sentence_indexer = RuwacIndexer(lexicon)
 
 

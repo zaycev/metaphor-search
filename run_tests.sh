@@ -13,24 +13,20 @@ TEST_INPUT_ROOT=$PWD/
 TEST_OUTPUT_ROOT=$PWD/
 SCRIPTS_ROOT=$PWD/scripts
 
-# Test LF sentences processing
-# time python $SCRIPTS_ROOT/run_sentence_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s tiny
-# time python $SCRIPTS_ROOT/run_sentence_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s medium
-# time python $SCRIPTS_ROOT/run_sentence_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s large
+# Russian
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s tiny
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large
 
-# time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s tiny -l 10000 -d 1
-# time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s medium -l 100000 -d 1
-# time python $SCRIPTS_ROOT/run_sentence_searcher.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s large -l 1000000 -d 1
+time python $SCRIPTS_ROOT/run_ruwac_indexer.py          -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s tiny
+time python $SCRIPTS_ROOT/run_ruwac_indexer.py          -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium
+time python $SCRIPTS_ROOT/run_ruwac_indexer.py          -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large
 
-# time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s tiny
-# time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s medium
-# time python $SCRIPTS_ROOT/run_sentence_frequencies.py -t 1 -i $TEST_OUTPUT_ROOT -s large
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s tiny    -c ruwac
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s medium  -c ruwac
+time python $SCRIPTS_ROOT/run_sentence_candidates.py    -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l ru -s large   -c ruwac
 
-# time python $SCRIPTS_ROOT/run_sentence_candidates.py -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l russian -f plain -s tiny -c ruwac
-# time python $SCRIPTS_ROOT/run_sentence_candidates.py -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l russian -f plain -s medium -c ruwac
-time python $SCRIPTS_ROOT/run_sentence_candidates.py -t 1 -i $TEST_OUTPUT_ROOT -o $TEST_OUTPUT_ROOT -l russian -f json -s large -c ruwac
-
-# # Test ruwac processing
-# time python $SCRIPTS_ROOT/run_ruwac_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s tiny
-# time python $SCRIPTS_ROOT/run_ruwac_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s medium
-# time python $SCRIPTS_ROOT/run_ruwac_indexer.py -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -s large
+# Spanish
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s tiny
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s medium
+time python $SCRIPTS_ROOT/run_sentence_indexer.py       -t 1 -i $TEST_INPUT_ROOT -o $TEST_OUTPUT_ROOT -l es -s large

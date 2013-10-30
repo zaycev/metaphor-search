@@ -24,10 +24,11 @@ logging.basicConfig(level=logging.INFO)
 
 
 arg_parser = argparse.ArgumentParser()
-arg_parser.add_argument("-t", "--test", type=int, choices=(0, 1), default=0)
-arg_parser.add_argument("-s", "--test_size", type=str, choices=("tiny", "medium", "large"), default="tiny")
-arg_parser.add_argument("-i", "--input", type=str)
-arg_parser.add_argument("-o", "--output", type=str)
+arg_parser.add_argument("-t", "--test",         type=int, choices=(0, 1),                       default=0)
+arg_parser.add_argument("-s", "--test_size",    type=str, choices=("tiny", "medium", "large"),  default="tiny")
+arg_parser.add_argument("-l", "--language",     type=str, choices=("ru", "es", "en"),           default=None)
+arg_parser.add_argument("-i", "--input",        type=str)
+arg_parser.add_argument("-o", "--output",       type=str)
 arguments = arg_parser.parse_args()
 
 
@@ -39,14 +40,17 @@ if arguments.test == 1:
         arguments.input,
         "test_data",
         arguments.test_size,
+        arguments.language,
         "sentence.txt"
     )
     output_path = os.path.join(
         arguments.output,
         "test_out",
         arguments.test_size,
+        arguments.language,
         "sentence"
     )
+
 else:
 
     input_path = arguments.input
@@ -82,7 +86,7 @@ index.open()
 
 
 logging.info("Initializing sentence stream and its parser.")
-sentence_stream = LFSentenceStream(input_path)
+sentence_stream = LFSentenceStream(input_path, language=arguments.language)
 sentence_parser = LFSentenceParser()
 sentence_indexer = LFSentenceIndexer(lexicon)
 

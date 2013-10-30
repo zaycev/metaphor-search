@@ -13,8 +13,11 @@ from hugin.minlf import MinLFSParser
 
 class LFSentenceStream(object):
 
-    def __init__(self, sentences_fl_path):
-        self.parser = MinLFSParser(open(sentences_fl_path, "rb"))
+    def __init__(self, sentences_fl_path, language):
+        if language == "ru" or language == "es":
+            self.parser = MinLFSParser(open(sentences_fl_path, "rb"))
+        else:
+            raise Exception("Unsupported language: %s" % language)
 
     def __iter__(self):
         return self.parser.__iter__()

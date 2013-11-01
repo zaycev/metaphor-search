@@ -19,7 +19,7 @@ from nltk.tokenize import wordpunct_tokenize, sent_tokenize
 
 
 class GigawordStream(object):
-    DOC_OPENNING_TAG = "<DOC"
+    DOC_OPENNING_TAG = "<DOC>"
     DOC_CLOSING_TAG = "</DOC>"
 
     def __init__(self, in_fl_stream):

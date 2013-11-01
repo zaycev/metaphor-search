@@ -90,7 +90,7 @@ index.open()
 
 logging.info("Initializing ruwac stream and its parser.")
 
-if arguments.language == "es":
+if arguments.language == "es" or arguments.language == "en":
     sentence_stream = GigawordStream(open(input_path, "rb"))
     sentence_parser = GigawordParser(language=arguments.language)
 elif arguments.language == "ru":

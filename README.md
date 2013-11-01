@@ -51,7 +51,7 @@ python scripts/run_sentence_candidates.py \
  3. `-l`, `--language`			Data language: `ru`, `es`, or `en`.
  4. `-f`, `--format`			Output format: `json` or `plain`.
  5. `-o`, `--output`			Location of the output file.
- 6. `-g`, `--output_lf`			Put logic for of found metaphor to output file: `0` or `1`.
+ 6. `-g`, `--output_lf`			Put logic form of found metaphor to output file: `0` or `1`.
 
 
 ##### 6. Relax and make herbal tea.

@@ -9,6 +9,7 @@ from sear.utils import StreamParser
 from sear.index import DocumentIndexer
 
 from hugin.minlf import MinLFSParser
+from hugin.minlf import MinBoxerLFSParser
 
 
 class LFSentenceStream(object):
@@ -16,6 +17,8 @@ class LFSentenceStream(object):
     def __init__(self, sentences_fl_path, language):
         if language == "ru" or language == "es":
             self.parser = MinLFSParser(open(sentences_fl_path, "rb"))
+        elif language == "en":
+            self.parser = MinBoxerLFSParser(open(sentences_fl_path, "rb"))
         else:
             raise Exception("Unsupported language: %s" % language)
 

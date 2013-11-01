@@ -3,7 +3,7 @@
 
 import re
 import json
-import StringIO as stringio 
+import StringIO as stringio
 import xml.dom.minidom as minidom
 
 from sear.index import Document
@@ -14,6 +14,7 @@ from sear.index import DocumentIndexer
 from metaphor.ruwac import RuwacDocument
 
 from nltk.stem.snowball import SpanishStemmer
+from nltk.stem.lancaster import LancasterStemmer
 from nltk.tokenize import wordpunct_tokenize, sent_tokenize
 
 
@@ -59,6 +60,8 @@ class GigawordParser(StreamParser):
         self.next_id = 0
         if language == "es":
             self.stemmer = SpanishStemmer()
+        elif language == "en":
+            self.stemmer = LancasterStemmer()
         else:
             raise Exception("Unsupported language %s" % language)
 

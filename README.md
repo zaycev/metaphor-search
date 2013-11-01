@@ -1,12 +1,12 @@
 ## Quering metaphors
 
-* #### Cd to the repository root:
+* ### Cd to the repository root:
 
 ```
 cd /lfs1/vzaytsev/software/metaphor-search/
 ```
 
-* #### Add `metaphor`'s packages to `PYTHONPATH` and set `NLTK` data path (if needed):
+* ### Add `metaphor`'s packages to `PYTHONPATH` and set `NLTK` data path (if needed):
 
 ```
 HUGIN_ROOT=$PWD/hugin
@@ -18,7 +18,7 @@ export NLTK_DATA=/lfs1/vzaytsev/nltk
 
 ```
 
-* #### Set searcher options:
+* ### Set searcher options:
 
 ```
 # Specify language, choices: ru, es, en
@@ -31,7 +31,7 @@ QUERY=/lfs1/vzaytsev/corpora2/$LANG/queries/test_query.json
 OUT_FILE=/lfs1/vzaytsev/corpora2/$LANG/found_metaphors.json
 ```
 
-* #### Run searcher:
+* ### Run searcher:
 
 ```
 python scripts/run_sentence_candidates.py \
@@ -44,7 +44,7 @@ python scripts/run_sentence_candidates.py \
 		-g 0
 ```
 
-* #### Options:
+* ### Options:
  1. `-i`, `--input` 			LF sentences index root location.
  2. `-c`, `--context_input`	Context index root location.
  3. `-l`, `--language`			Data language: `ru`, `es`, or `en`.

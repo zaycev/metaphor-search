@@ -58,6 +58,7 @@ class GigawordParser(StreamParser):
 
     def __init__(self, language):
         self.next_id = 0
+        self.language = language
         if language == "es":
             self.stemmer = SpanishStemmer()
         elif language == "en":
@@ -75,7 +76,10 @@ class GigawordParser(StreamParser):
 
     def parse_raw(self, xml_str):
         xml = minidom.parseString(xml_str)
-        url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
+        if self.language == "es":
+            url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
+        else:
+            url = "<NONE>"
         title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
         text = stringio.StringIO()
         for node in xml.getElementsByTagName("TEXT")[0].childNodes:

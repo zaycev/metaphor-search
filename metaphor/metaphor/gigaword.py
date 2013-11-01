@@ -80,7 +80,10 @@ class GigawordParser(StreamParser):
             url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
         else:
             url = "<NONE>"
-        title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
+        if self.language == "es":
+            title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
+        else:
+            url = "<NONE>"
         text = stringio.StringIO()
         for node in xml.getElementsByTagName("TEXT")[0].childNodes:
             if len(node.childNodes) > 0:

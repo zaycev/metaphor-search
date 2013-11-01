@@ -42,6 +42,7 @@ class MinBoxerLFSParser(object):
                 lf_line = line
                 yield raw_text, lf_line, terms
 
+
 class MinLFSParser(object):
     LF_COMMENT_PRT = re.compile("%+\s*(.+)")
     LF_TERM_PRT = re.compile("((\[.+?\]\:)([^ .]+?)\-[a-z]+(\([,a-z0-9]+?\))?)")

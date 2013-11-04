@@ -19,6 +19,7 @@ from sear.lexicon import DictLexicon
 from hugin.metaphor import find_path
 
 from metaphor.ruwac import RuwacDocument
+from metaphor.gigaword import text_to_terms
 
 
 logging.basicConfig(level=logging.INFO)
@@ -207,8 +208,13 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
 
     sent_text = sent_document["r"].encode("utf-8")
     sent_lf_text = sent_document["s"].encode("utf-8")
-    sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
     sent_hash = str(hashlib.md5(sent_text).hexdigest())
+
+    if arguments.language == "ru":
+        sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
+    else:
+        sent_text_u = sent_text.decode("utf-8")
+        sent_terms = [t for t in text_to_terms(sent_text_u, arguments.language)]
 
     if sent_hash in sent_hashes:
         logging.info("Skipped sentence, because we've seen its hash before: %s" % sent_hash[:8])
@@ -267,8 +273,6 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
 
                             matched_context = []
                             matched_context_s = []
-
-
 
                         if target_p.term_id < source_p.term_id:
                             a, b = target_p.term_id, source_p.term_id

@@ -19,7 +19,8 @@ from nltk.tokenize import wordpunct_tokenize, sent_tokenize
 
 
 class GigawordStream(object):
-    DOC_OPENNING_TAG = "<DOC>"
+    DOC_OPENNING_TAG_1 = "<DOC "
+    DOC_OPENNING_TAG_2 = "<DOC>"
     DOC_CLOSING_TAG = "</DOC>"
 
     def __init__(self, in_fl_stream):
@@ -37,7 +38,8 @@ class GigawordStream(object):
     def __iter__(self):
         for line in self.in_fl_stream:
 
-            if line.startswith(self.DOC_OPENNING_TAG):
+            if line.startswith(self.DOC_OPENNING_TAG_1) or \
+               line.startswith(self.DOC_OPENNING_TAG_2):
                 self.string_buffer = stringio.StringIO()
                 self.string_buffer.write(line)
 
@@ -55,15 +57,16 @@ class GigawordStream(object):
 
 
 class GigawordParser(StreamParser):
+    STEMMERS = {
+        "en": SpanishStemmer(),
+        "es": LancasterStemmer(),
+    }
 
     def __init__(self, language):
         self.next_id = 0
         self.language = language
-        if language == "es":
-            self.stemmer = SpanishStemmer()
-        elif language == "en":
-            self.stemmer = LancasterStemmer()
-        else:
+        self.stemmer = self.STEMMERS.get(language)
+        if self.stemmer is None:
             raise Exception("Unsupported language %s" % language)
 
     def init_id_counter(self, initial):
@@ -78,26 +81,24 @@ class GigawordParser(StreamParser):
         xml = minidom.parseString(xml_str)
         if self.language == "es":
             url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
-        else:
-            url = "<NONE>"
-        if self.language == "es":
             title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
         else:
+            url = "<NONE>"
             title = "<NONE>"
         text = stringio.StringIO()
         for node in xml.getElementsByTagName("TEXT")[0].childNodes:
             if len(node.childNodes) > 0:
                 text.write(node.firstChild.nodeValue)
         content = text.getvalue()
-        terms = set([t.lower().encode("utf-8") for s in sent_tokenize(content)
-                                               for t in wordpunct_tokenize(s)])
+        terms = list(set([t.lower().encode("utf-8") for s in sent_tokenize(content)
+                                                    for t in wordpunct_tokenize(s)]))
+        terms = [self.stemmer.stem(t) for t in terms]
         return RuwacDocument(self.new_id(), url, title, content, terms)
 
 
-
-
-
-
-
-
-
+def text_to_terms(text, language):
+    stemmer = GigawordParser.STEMMERS[language]
+    terms = list(set([t.lower().encode("utf-8") for s in sent_tokenize(text)
+                                                for t in wordpunct_tokenize(s)]))
+    terms = [stemmer.stem(t) for t in  terms]
+    return terms

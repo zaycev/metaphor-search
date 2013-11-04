@@ -268,7 +268,7 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                                                       for term in sent]
                                 elif arguments.language == "es" or arguments.language == "en":
                                     matched_context.append(document)
-                                    matched_context_s.append(document.content)
+                                    matched_context_s.append([document.content])
                                     continue
                                 else:
                                     raise Exception("Unsupported language")

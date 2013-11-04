@@ -232,7 +232,8 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                 source_p, target_p, found = find_path(target_term,
                                                       source_term,
                                                       sent_lf_text,
-                                                      max_path_length=q_max_path_length)
+                                                      max_path_length=q_max_path_length,
+                                                      language=arguments.language)
 
                 if found:
 
@@ -261,7 +262,16 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
                                 document_blob = c_storage.get_document(doc_id)
                                 document = RuwacDocument(doc_id)
                                 document.fromstring(document_blob)
-                                document_terms = [term.encode("utf-8") for sent in document.content for term in sent]
+                                if arguments.language == "ru":
+                                    document_terms = [term.encode("utf-8")
+                                                      for sent in document.content
+                                                      for term in sent]
+                                elif arguments.language == "es" or arguments.language == "en":
+                                    matched_context_s.append(document.content)
+                                    continue
+                                else:
+                                    raise Exception("Unsupported language")
+
                                 document_text = " ".join(document_terms)
                                 if sent_text in document_text:
                                     sentence_list = [" ".join(sent) for sent in document.content]

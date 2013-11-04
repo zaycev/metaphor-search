@@ -10,6 +10,7 @@
 import re
 
 SENT_RE = re.compile("((\[.+?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
+SENT_BOXER_RE = re.compile("((\[.*?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
 
 
 class Predicate(object):
@@ -22,17 +23,26 @@ class Predicate(object):
         self.term_id = term_id
 
     def __repr__(self):
-        return "<Predicate(%d, %s, %s)>" % (
+        return "<Predicate(%d, %s, %s, %s)>" % (
             self.p_id,
             self.lemma,
-            (" " + self.pos) if self.pos else ""
+            (" " + self.pos) if self.pos else "",
+            self.args,
         )
 
-def find_path(source_lemma, target_lemma, sentence, max_path_length=0):
-    predicates = parse_sent(sentence)
+def find_path(source, target, sentence, max_path_length=0, language=None):
 
-    sources = [pred for pred in predicates if pred.lemma == source_lemma]
-    targets = [pred for pred in predicates if pred.lemma == target_lemma]
+    if language == "ru" or language == "es":
+        predicates = parse_sent(sentence)
+        sources = [pred for pred in predicates if pred.lemma == source]
+        targets = [pred for pred in predicates if pred.lemma == target]
+    elif language == "en":
+        predicates = parse_boxer_sent(sentence)
+        sources = [pred for pred in predicates if pred.lemma == source_lemma]
+        targets = [pred for pred in predicates if pred.lemma == target_lemma]
+    else:
+        raise Exception("Unsupported language %s" % language)
+
     arg_predicates = dict()
     for pred in predicates:
         for arg in pred.args:
@@ -66,6 +76,24 @@ def parse_sent(lf_text):
     return predicates
 
 
+def parse_boxer_sent(lf_text):
+    matches = SENT_BOXER_RE.findall(lf_text)
+    predicates = []
+    for i, match in enumerate(matches):
+        term_id = match[1]
+        term_id = match[1][(len(term_id)-5):(len(term_id)-2)]
+        if term_id != "":
+            term_id = int(term_id) - 1
+        else:
+            term_id = -1
+        lemma = match[2]
+        pos = match[3][1:]
+        args = match[4][1:(len(match[4]) - 1)].split(",")
+        predicates.append(Predicate(i, lemma, pos, args, term_id))
+
+    return predicates
+
+
 def __path_exists__(source, target, predicates, arg_predicates, max_path_length):
     """
 
@@ -76,8 +104,8 @@ def __path_exists__(source, target, predicates, arg_predicates, max_path_length)
 
     visited = set()
 
-    source_arg = source.args[1] if source.pos == "nn" else source.args[0]
-    target_arg = target.args[1] if target.pos == "nn" else target.args[0]
+    source_arg = source.args[1] if (source.pos == "nn" or source.pos == "n") else source.args[0]
+    target_arg = target.args[1] if (target.pos == "nn" or target.pos == "n") else target.args[0]
 
     if source_arg in target.args:
         return True
@@ -89,7 +117,12 @@ def __path_exists__(source, target, predicates, arg_predicates, max_path_length)
         return False
 
     visited = set([source.p_id, target.p_id])
-    candidates = [pred for pred in arg_predicates[source_arg] if pred.p_id not in visited]
+    # candidates = [pred for pred in arg_predicates[source_arg] if pred.p_id not in visited]
+    candidates = []
+    for pred in arg_predicates[source_arg]:
+        if pred.p_id not in visited:
+            candidates.append(pred)
+
     visited.update([pred.p_id for pred in candidates])
 
     iter = 1

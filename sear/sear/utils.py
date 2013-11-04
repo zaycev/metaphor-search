@@ -75,9 +75,14 @@ class IndexingPipeline(object):
 
             index_record = item_indexer.index_item(document)
 
-            self.index.add_to_index(document.id, index_record)
-            self.storage.add_terms(self.lexicon, new_terms)
-            self.storage.add_document(document.id, document.tostring())
+            try:
+                raw_document = document.tostring()
+                self.index.add_to_index(document.id, index_record)
+                self.storage.add_terms(self.lexicon, new_terms)
+                self.storage.add_document(document.id, raw_document)
+            except:
+                logging.error("Error while serializing document.")
+                continue
 
             total_bytes += len(raw_document) + 1
             total_terms = len(self.lexicon)

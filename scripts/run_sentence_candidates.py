@@ -126,7 +126,7 @@ q_label = j_query.get("annotation", dict()).get("label")
 q_corpus = j_query.get("annotation", dict()).get("corpus")
 q_targets = j_query.get("query", dict()).get("targets")
 q_sources = j_query.get("query", dict()).get("sources")
-q_max_path_length =  j_query.get("query", dict()).get("max_path_lenght", 0)
+q_max_path_length =  j_query.get("query", dict()).get("max_path_length", 0)
 
 q_source_frame = j_query.get("annotation", dict()).get("source_frame", None)
 q_source_concept_subdomain = j_query.get("annotation", dict()).get("source_concept_subdomain", None)

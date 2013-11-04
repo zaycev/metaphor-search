@@ -100,7 +100,7 @@ class GigawordParser(StreamParser):
 
 def text_to_terms(text, language):
     stemmer = GigawordParser.STEMMERS[language]
-    terms = list(set([t.lower().encode("utf-8") for s in sent_tokenize(text)
-                                                for t in wordpunct_tokenize(s)]))
-    terms = [stemmer.stem(t) for t in  terms]
+    terms = list(set([t.lower() for s in sent_tokenize(text)
+                                for t in wordpunct_tokenize(s)]))
+    terms = [stemmer.stem(t).encode("utf-8") for t in  terms]
     return terms

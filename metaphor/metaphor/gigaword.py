@@ -14,7 +14,7 @@ from sear.index import DocumentIndexer
 from metaphor.ruwac import RuwacDocument
 
 from nltk.stem.snowball import SpanishStemmer
-from nltk.stem.lancaster import LancasterStemmer
+from nltk.stem.snowball import PorterStemmer
 from nltk.tokenize import wordpunct_tokenize, sent_tokenize
 
 
@@ -58,8 +58,8 @@ class GigawordStream(object):
 
 class GigawordParser(StreamParser):
     STEMMERS = {
-        "en": SpanishStemmer(),
-        "es": LancasterStemmer(),
+        "en": PorterStemmer(ignore_stopwords=False),
+        "es": SpanishStemmer(),
     }
 
     def __init__(self, language):
@@ -94,9 +94,7 @@ class GigawordParser(StreamParser):
             if len(node.childNodes) > 0:
                 text.write(node.firstChild.nodeValue)
         content = text.getvalue()
-        terms = list(set([t.lower().encode("utf-8") for s in sent_tokenize(content)
-                                                    for t in wordpunct_tokenize(s)]))
-        terms = [self.stemmer.stem(t) for t in terms]
+        terms = text_to_terms(content, self.language)
         return RuwacDocument(self.new_id(), url, title, content, terms)
 
 

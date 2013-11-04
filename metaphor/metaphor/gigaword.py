@@ -80,8 +80,12 @@ class GigawordParser(StreamParser):
     def parse_raw(self, xml_str):
         xml = minidom.parseString(xml_str)
         if self.language == "es":
-            url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
-            title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
+            try:
+                url = "gigaword:" + xml.getElementsByTagName("DOC")[0].attributes["id"].value
+                title = xml.getElementsByTagName("HEADLINE")[0].firstChild.nodeValue
+            except:
+                url = "<NONE>"
+                title = "<NONE>"
         else:
             url = "<NONE>"
             title = "<NONE>"

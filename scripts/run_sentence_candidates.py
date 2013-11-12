@@ -227,6 +227,9 @@ for sent_document_id, (sources, targets) in candidates.iteritems():
         for target_term_id in targets:
             for source_term_id in sources:
 
+                if target_term_id == source_term_id:
+                    continue
+
                 source_term = mini_dict[source_term_id]
                 target_term = mini_dict[target_term_id]
                 source_p, target_p, found = find_path(target_term,

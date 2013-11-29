@@ -8,7 +8,9 @@
 # For license information, see LICENSE
 
 import re
+import logging
 
+EN_TERM_RE = re.compile("(.+)(\-(.+))?")
 SENT_RE = re.compile("((\[.+?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
 SENT_BOXER_RE = re.compile("((\[.*?\]\:)?([^ .]+?)(\-[a-z]+)?(\([,a-z0-9]+?\)))")
 
@@ -30,18 +32,31 @@ class Predicate(object):
             self.args,
         )
 
-def find_path(source, target, sentence, max_path_length=0, language=None):
+
+def find_path(source,
+              target,
+              source_pos,
+              target_pos,
+              sentence,
+              use_pos=False,
+              max_path_length=0,
+              language=None):
 
     if language == "ru" or language == "es":
         predicates = parse_sent(sentence)
-        sources = [pred for pred in predicates if pred.lemma == source]
-        targets = [pred for pred in predicates if pred.lemma == target]
     elif language == "en":
         predicates = parse_boxer_sent(sentence)
-        sources = [pred for pred in predicates if pred.lemma == source_lemma]
-        targets = [pred for pred in predicates if pred.lemma == target_lemma]
     else:
         raise Exception("Unsupported language %s" % language)
+
+    if use_pos:
+        sources = [pred for pred in predicates if pred.lemma == source]
+        targets = [pred for pred in predicates if pred.lemma == target]
+    else:
+        sources = [pred for pred in predicates
+                   if pred.lemma == source and (pred.pos == source_pos or source_pos is None)]
+        targets = [pred for pred in predicates
+                   if pred.lemma == source and (pred.pos == target_pos or target_pos is None)]
 
     arg_predicates = dict()
     for pred in predicates:

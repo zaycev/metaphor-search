@@ -15,7 +15,7 @@ class MinBoxerLFSParser(object):
     LF_COMMENT_PRT = re.compile("%+\s*(.+)")
     LF_TERM_PRT = re.compile("((\[.*?\]\:)([^ .]+?)\-[a-z]+(\([,a-z0-9]+?\))?)")
     LF_EMPTY_LINE = re.compile("^\s*$")
-    LF_TERM_LINE = re.compile("^\d\d\d\d\s+(.+)$")
+    LF_TERM_LINE = re.compile("^\d+\s+(.+)$")
 
     def __init__(self, i_file):
         self.i_file = i_file
@@ -24,8 +24,10 @@ class MinBoxerLFSParser(object):
         raw_text = ""
         self.i_file.next()
         self.i_file.next()
+        terms = None
         for line in self.i_file:
             if line.startswith("%%% "):
+                terms = []
                 raw_text_match = self.LF_COMMENT_PRT.findall(line)
                 if len(raw_text_match) == 1:
                     raw_text = raw_text_match[0]
@@ -35,13 +37,11 @@ class MinBoxerLFSParser(object):
             elif line.startswith("id(") or self.LF_EMPTY_LINE.match(line):
                 continue
             elif self.LF_TERM_LINE.match(line):
-                continue
+                _, form, pos, lemma, biotag  = line.split()
+                terms.append(lemma.lower())
             else:
-                terms_match = self.LF_TERM_PRT.findall(line)
-                terms = [m[2] for m in terms_match] if terms_match is not None else []
                 lf_line = line
                 yield raw_text, lf_line, terms
-
 
 class MinLFSParser(object):
     LF_COMMENT_PRT = re.compile("%+\s*(.+)")

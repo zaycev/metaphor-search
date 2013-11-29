@@ -1,16 +1,10 @@
 # coding: utf-8
 # Author: Vladimir M. Zaytsev <zaytsev@usc.edu>
 
-import re
-import json
 import StringIO as stringio
 import xml.dom.minidom as minidom
 
-from sear.index import Document
-from sear.index import IndexRecord
 from sear.utils import StreamParser
-from sear.index import DocumentIndexer
-
 from metaphor.ruwac import RuwacDocument
 
 from nltk.stem.snowball import SpanishStemmer
@@ -51,9 +45,6 @@ class GigawordStream(object):
 
             elif self.string_buffer is not None:
                 self.string_buffer.write(line)
-
-        if self.string_buffer is not None:
-            yield self.string_buffer.getvalue()
 
 
 class GigawordParser(StreamParser):
@@ -102,5 +93,5 @@ def text_to_terms(text, language):
     stemmer = GigawordParser.STEMMERS[language]
     terms = list(set([t.lower() for s in sent_tokenize(text)
                                 for t in wordpunct_tokenize(s)]))
-    terms = [stemmer.stem(t).encode("utf-8") for t in  terms]
+    terms = [stemmer.stem(t).encode("utf-8") for t in terms]
     return terms

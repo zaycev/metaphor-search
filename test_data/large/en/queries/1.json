@@ -1,0 +1,23 @@
+{
+    "annotation": {
+        "label": "poverty",
+        "language": "english",
+        "corpus": "gigaword",
+
+        "source_frame": "building",
+        "source_concept_subdomain": "",
+
+        "target_frame": "wealth",
+        "target_concept_domain": "economy",
+        "target_concept_subdomain": "wealth"
+    },
+    "query": {
+        "max_path_lenght": 100,
+        "targets": [
+            "firearm-n"
+        ],
+        "sources": [
+            "lose-v"
+        ]
+    }
+}

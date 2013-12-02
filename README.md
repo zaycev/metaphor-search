@@ -50,8 +50,36 @@ python scripts/run_sentence_candidates.py \
  2. `-c`, `--context_input`	Context index root location.
  3. `-l`, `--language`			Data language: `ru`, `es`, or `en`.
  4. `-f`, `--format`			Output format: `json` or `plain`.
- 5. `-o`, `--output`			Location of the output file.
- 6. `-g`, `--output_lf`			Put logic form of found metaphor to output file: `0` or `1`.
+ 5. `-o`, `--output`			Location of the output directory.
+ 6. `-x`, `--output_lf`			Put logic form of found metaphor to output file: `0` or `1`.
+ 7. `-q`, `--query`				Metaphor search query file.
+ 8. `-e`, `--extension`			Extension that will be addet to the output files. Default is `.metaphors.json`.
+ 9. `-p`, `--use_pos`			Use parts of speech. Postfixes such as `-\w+` (`-n`, `-vb`, etc) if present, will be recognised as additional part of speech constraint in query. Default is `0`.
 
+#### Query Example
 
-##### 6. Relax and make herbal tea.
+```
+{
+    "annotation": {
+        "label": "poverty",
+        "language": "english",
+        "corpus": "gigaword",
+
+        "source_frame": "building",
+        "source_concept_subdomain": "",
+
+        "target_frame": "wealth",
+        "target_concept_domain": "economy",
+        "target_concept_subdomain": "wealth"
+    },
+    "query": {
+        "max_path_lenght": 100,
+        "targets": [
+            "money-n"
+        ],
+        "sources": [
+            "water-n"
+        ]
+    }
+}
+```

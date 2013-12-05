@@ -2,13 +2,13 @@
 
 #### 1. Cd to the repository root:
 
-```
+```shell
 cd /lfs1/vzaytsev/software/metaphor-search/
 ```
 
 #### 2. Add `metaphor`'s packages to `PYTHONPATH` and set `NLTK` data path (if needed):
 
-```
+```shell
 HUGIN_ROOT=$PWD/hugin
 SEAR_ROOT=$PWD/sear
 METAPHOR_ROOT=$PWD/metaphor
@@ -20,28 +20,30 @@ export NLTK_DATA=/lfs1/vzaytsev/nltk
 
 #### 3. Set searcher options:
 
-```
+```shell
 # Specify language, choices: ru, es, en
-LANG=ru
+LANG=en
 SENTENCES_ROOT=/lfs1/vzaytsev/corpora2/$LANG/sentence_index
 DOCUMENTS_ROOT=/lfs1/vzaytsev/corpora2/$LANG/document_index
 # change this according to your query file:
 QUERY=/lfs1/vzaytsev/corpora2/$LANG/queries/test_query.json
 # set any location for found metaphors
-OUT_FILE=/lfs1/vzaytsev/corpora2/$LANG/found_metaphors.json
+OUT_DIR=/lfs1/vzaytsev/corpora2/$LANG/found/
 ```
 
 #### 4. Run searcher:
 
-```
+```shell
 python scripts/run_sentence_candidates.py \
 		-i $SENTENCES_ROOT \
 		-c $DOCUMENTS_ROOT \
 		-l $LANG \
 		-f json \
 		-q $QUERY \
-		-o $OUT_FILE \
-		-g 0
+		-o $OUT_DIR \
+		-x 0 \
+		-e ".metaphors" \
+		-p 1
 ```
 
 #### 5. Options:
@@ -58,7 +60,7 @@ python scripts/run_sentence_candidates.py \
 
 #### Query Example
 
-```
+```json
 {
     "annotation": {
         "label": "poverty",

@@ -26,7 +26,7 @@ LANG=en
 SENTENCES_ROOT=/lfs1/vzaytsev/corpora2/$LANG/sentence_index
 DOCUMENTS_ROOT=/lfs1/vzaytsev/corpora2/$LANG/document_index
 # change this according to your query file:
-QUERY=/lfs1/vzaytsev/corpora2/$LANG/queries/test_query.json
+QUERIES=/lfs1/vzaytsev/corpora2/$LANG/queries/query.*.json # this can be a pattern
 # set any location for found metaphors
 OUT_DIR=/lfs1/vzaytsev/corpora2/$LANG/found/
 ```
@@ -39,7 +39,7 @@ python scripts/run_sentence_candidates.py \
 		-c $DOCUMENTS_ROOT \
 		-l $LANG \
 		-f json \
-		-q $QUERY \
+		-q $QUERIES \
 		-o $OUT_DIR \
 		-x 0 \
 		-e ".metaphors" \

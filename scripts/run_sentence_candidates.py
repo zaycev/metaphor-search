@@ -297,7 +297,7 @@ for query_path in glob.glob(query_paths):
                                     if sent_text in document_text:
 
                                         if arguments.language == "ru":
-                                            sentence_list = [" ".join(sent) for sent in document.content]
+                                            sentence_list = [" ".join(sent).encode("utf-8") for sent in document.content]
                                         elif arguments.language == "es" or arguments.language == "en":
                                             sentence_list = SENT_TOKENIZER.tokenize(document_text)
                                         else:

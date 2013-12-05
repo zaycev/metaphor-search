@@ -312,7 +312,7 @@ for query_path in glob.glob(query_paths):
                                 a, b = source_p.term_id, target_p.term_id
                             else:
                                 a, b = source_p.term_id, target_p.term_id
-                                logging.error("Error occurred, target id == source id")
+                                logging.error("Error occurred, target id == source id.")
 
                             context = []
                             raw_sentence_terms = sent_text.split(" ")
@@ -332,9 +332,9 @@ for query_path in glob.glob(query_paths):
                                     "context": " ".join(context).decode("utf-8"),
                                     "annotationMappings": {
                                         "sourceInLm": True,
-                                        "source": source_term,
+                                        "source": source_term.decode("utf-8"),
                                         "targetInLm": True,
-                                        "target": target_term,
+                                        "target": target_term.decode("utf-8"),
                                     },
                                     "sourceFrame": q_source_frame,
                                     "sourceConceptSubDomain": q_source_concept_subdomain,
@@ -343,7 +343,7 @@ for query_path in glob.glob(query_paths):
                                     "targetConceptSubDomain": q_target_concept_subdomain
                                 },
                                 "language": q_language,
-                                "sentenceList": sentence_list,
+                                "sentenceList": [s.decode("utf-8") for s in sentence_list],
                                 "url": "",
                             }
 

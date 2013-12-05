@@ -56,7 +56,7 @@ def find_path(source,
         sources = [pred for pred in predicates
                    if pred.lemma == source and (pred.pos == source_pos or source_pos is None)]
         targets = [pred for pred in predicates
-                   if pred.lemma == source and (pred.pos == target_pos or target_pos is None)]
+                   if pred.lemma == target and (pred.pos == target_pos or target_pos is None)]
 
     arg_predicates = dict()
     for pred in predicates:

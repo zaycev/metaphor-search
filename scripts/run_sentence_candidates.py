@@ -123,7 +123,7 @@ if context_input is not None:
     c_index.open()
 
     logging.info("Initializing context searcher.")
-    if arguments.language == "ru":
+    if arguments.language == "rus":
         c_searcher = Searcher(c_index, "ruwac_document_id")
     else:
         c_searcher = Searcher(c_index, "document_id")
@@ -222,7 +222,7 @@ for query_path in glob.glob(query_paths):
         sent_lf_text = sent_document["s"].encode("utf-8")
         sent_hash = str(hashlib.md5(sent_text).hexdigest())
 
-        if arguments.language == "ru":
+        if arguments.language == "rus":
             sent_terms = [term.encode("utf-8") for term in sent_document["t"]]
         else:
             sent_text_u = sent_text.decode("utf-8")
@@ -276,7 +276,7 @@ for query_path in glob.glob(query_paths):
                                            if c_lexicon.get_id(term) != -1]
 
                                 logging.info("Searching context using %d of %d terms" % (len(c_query), len(sent_terms)))
-                                c_candidates = found_contexts = c_searcher.find(c_query)
+                                c_candidates = c_searcher.find(c_query)
                                 logging.info("Found %d candidates for context", len(c_candidates))
 
                                 for doc_id in c_candidates:
@@ -284,21 +284,21 @@ for query_path in glob.glob(query_paths):
                                     document = RuwacDocument(doc_id)
                                     document.fromstring(document_blob)
 
-                                    if arguments.language == "ru":
+                                    if arguments.language == "rus":
                                         document_terms = [term.encode("utf-8")
                                                           for sent in document.content
                                                           for term in sent]
                                         document_text = " ".join(document_terms)
-                                    elif arguments.language == "es" or arguments.language == "en":
+                                    elif arguments.language == "spa" or arguments.language == "eng":
                                         document_text = document.content
                                     else:
                                         raise Exception("Unsupported language.")
 
                                     if sent_text in document_text:
 
-                                        if arguments.language == "ru":
+                                        if arguments.language == "rus":
                                             sentence_list = [" ".join(sent).encode("utf-8") for sent in document.content]
-                                        elif arguments.language == "es" or arguments.language == "en":
+                                        elif arguments.language == "spa" or arguments.language == "eng":
                                             sentence_list = SENT_TOKENIZER.tokenize(document_text)
                                         else:
                                             raise Exception("Unsupported language.")

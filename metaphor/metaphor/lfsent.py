@@ -15,9 +15,9 @@ from hugin.minlf import MinBoxerLFSParser
 class LFSentenceStream(object):
 
     def __init__(self, sentences_fl_path, language):
-        if language == "ru" or language == "es":
+        if language == "rus" or language == "spa":
             self.parser = MinLFSParser(open(sentences_fl_path, "rb"))
-        elif language == "en":
+        elif language == "eng":
             self.parser = MinBoxerLFSParser(open(sentences_fl_path, "rb"))
         else:
             raise Exception("Unsupported language: %s" % language)

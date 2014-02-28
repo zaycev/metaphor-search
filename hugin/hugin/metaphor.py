@@ -42,9 +42,9 @@ def find_path(source,
               max_path_length=0,
               language=None):
 
-    if language == "ru" or language == "es":
+    if language == "rus" or language == "spa":
         predicates = parse_sent(sentence)
-    elif language == "en":
+    elif language == "eng":
         predicates = parse_boxer_sent(sentence)
     else:
         raise Exception("Unsupported language %s" % language)

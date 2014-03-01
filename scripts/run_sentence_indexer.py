@@ -68,7 +68,6 @@ os.makedirs(output_path)
 
 logging.info("Initializing lexicon.")
 lexicon = DictLexicon(output_path)
-lexicon.load()
 
 
 logging.info("Initializing storage.")

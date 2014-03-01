@@ -80,8 +80,9 @@ class IndexingPipeline(object):
                 self.index.add_to_index(document.id, index_record)
                 self.storage.add_terms(self.lexicon, new_terms)
                 self.storage.add_document(document.id, raw_document)
-            except:
-                logging.error("Error while serializing document.")
+            except Exception:
+                import traceback
+                logging.error("Error while serializing document. %r" % traceback.format_exc())
                 continue
 
             total_bytes += len(raw_document) + 1
@@ -96,6 +97,7 @@ class IndexingPipeline(object):
                     total_bytes / mb_size,
                     time_delta.total_seconds()
                 ))
+                self.lexicon.dump()
 
             document_i += 1
 

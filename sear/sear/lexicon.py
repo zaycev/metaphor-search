@@ -13,6 +13,8 @@ class DictLexicon(object):
     def __init__(self, root_dir):
         self.term_dict = dict()
         self.root_dir = root_dir
+        self.lexicon_root = os.path.join(self.root_dir, self.LEX_DIR_NAME)
+        self.ldb = leveldb.LevelDB(self.lexicon_root)
 
     def add_term(self, term):
         term_and_freq = self.term_dict.get(term)
@@ -33,14 +35,12 @@ class DictLexicon(object):
         return -1
 
     def dump(self):
-        lexicon_root = os.path.join(self.root_dir, self.LEX_DIR_NAME)
-        ldb = leveldb.LevelDB(lexicon_root)
         w_batch = leveldb.WriteBatch()
         total_wrote = 0
         for term, term_and_freq in self.term_dict.iteritems():
             w_batch.Put(term, str(term_and_freq[0]) + self.TERM_FREQ_SEP + str(term_and_freq[1]))
             total_wrote += 1
-        ldb.Write(w_batch)
+        self.ldb.Write(w_batch)
         logging.info("DictLexicon: wrote %d term to ldb" % total_wrote)
 
     def load(self):

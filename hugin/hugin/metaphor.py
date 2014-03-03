@@ -83,7 +83,11 @@ def parse_sent(lf_text):
         term_id = match[1]
         term_id = match[1][(len(term_id)-5):(len(term_id)-2)]
         if term_id != "":
-            term_id = int(term_id) - 1
+            try:
+                term_id = int(term_id) - 1
+            except ValueError:
+                logging.error("Problem with parsing sentence: %s." % lf_text)
+                term_id = -1
         else:
             term_id = -1
         lemma = match[2]

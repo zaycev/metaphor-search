@@ -12,6 +12,7 @@ import nltk
 import logging
 import hashlib
 import argparse
+import traceback
 
 from sear.searcher import Searcher
 from sear.storage import LdbStorage
@@ -216,7 +217,11 @@ for query_path in glob.glob(query_paths):
 
     iter = 0
     for sent_document_id, (sources, targets) in candidates.iteritems():
-        sent_document = json.loads(storage.get_document(sent_document_id))
+
+        try:
+            sent_document = json.loads(storage.get_document(sent_document_id))
+        except IOError:
+            logging.error("Database error. Files are missed or corrupted: %s." % traceback.format_exc())
 
         sent_text = sent_document["r"].encode("utf-8")
         sent_lf_text = sent_document["s"].encode("utf-8")

@@ -50,9 +50,8 @@ class DictLexicon(object):
             logging.warn("Lexicon file %s not exist. Skip.")
         if len(self) > 0:
             raise Exception("Non empty lexicon does not support reading")
-        ldb = leveldb.LevelDB(lexicon_root)
         total_read = 0
-        for term, term_and_freq in ldb.RangeIter():
+        for term, term_and_freq in self.ldb.RangeIter():
             term_id, term_freq = term_and_freq.split(self.TERM_FREQ_SEP)
             term_id = int(term_id)
             term_freq = int(term_freq)

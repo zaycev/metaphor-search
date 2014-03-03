@@ -49,8 +49,8 @@ class GigawordStream(object):
 
 class GigawordParser(StreamParser):
     STEMMERS = {
-        "en": PorterStemmer(ignore_stopwords=False),
-        "es": SpanishStemmer(),
+        "eng": PorterStemmer(ignore_stopwords=False),
+        "spa": SpanishStemmer(),
     }
 
     def __init__(self, language):

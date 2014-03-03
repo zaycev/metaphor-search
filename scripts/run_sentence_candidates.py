@@ -9,6 +9,7 @@ import sys
 import json
 import glob
 import nltk
+import leveldb
 import logging
 import hashlib
 import argparse
@@ -220,7 +221,7 @@ for query_path in glob.glob(query_paths):
 
         try:
             sent_document = json.loads(storage.get_document(sent_document_id))
-        except IOError:
+        except leveldb.LevelDBError:
             logging.error("Database error. Files are missed or corrupted: %s." % traceback.format_exc())
 
         sent_text = sent_document["r"].encode("utf-8")

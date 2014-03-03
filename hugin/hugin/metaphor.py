@@ -47,7 +47,10 @@ def find_path(source,
     elif language == "eng":
         predicates = parse_boxer_sent(sentence)
     else:
-        raise Exception("Unsupported language %s" % language)
+        raise Exception("Unsupported language %s.\nLogic form: %s" % (
+            language,
+            sentence
+        ))
 
     if use_pos:
         sources = [pred for pred in predicates if pred.lemma == source]

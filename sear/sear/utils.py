@@ -97,7 +97,9 @@ class IndexingPipeline(object):
                     total_bytes / mb_size,
                     time_delta.total_seconds()
                 ))
-                self.lexicon.dump()
+
+                if document_i % 10000000:
+                    self.lexicon.dump()
 
             document_i += 1
 

@@ -177,7 +177,7 @@ class InvertedIndex(object):
     BARRELS_DIR = "barrels.ldb"
     META_FILE = "index.json"
     BATCH_SZ = 4096 * 1024
-    CACHE_SZ = 32000 * 1024
+    CACHE_SZ = 32000 * 4096
 
     def __init__(self, root_directory, field_properties=None):
         self.root = root_directory

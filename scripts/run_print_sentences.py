@@ -12,7 +12,7 @@ ifile = open(ifile, "rb")
 ofile = open(ofile, "wb")
 k = int(k)
 
-data = json.load(ifile.read())
+data = json.loads(ifile.read())
 
 m = data[0]
 tuples = []
